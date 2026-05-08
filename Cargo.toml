@@ -1,0 +1,52 @@
+[package]
+name = "rwhois-server"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "Async (tokio) Referral Whois (RFC 2167) server library with pluggable request handlers"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+keywords = ["rwhois", "whois", "tokio", "rfc2167", "server"]
+categories = ["network-programming", "asynchronous"]
+
+[lib]
+name = "rwhois"
+path = "src/lib.rs"
+
+[dependencies]
+# Library only requires what it actually uses on the I/O path. Consumers pick
+# their own runtime flavor (`rt-multi-thread`, …) in their own Cargo.toml; we
+# need `rt` so the accept loop can `tokio::spawn` per connection, and `macros`
+# for the `tokio::select!` / `tokio::pin!` used in the shutdown-aware accept
+# loop.
+tokio = { version = "1", features = ["net", "io-util", "time", "sync", "rt", "macros"] }
+tokio-util = { version = "0.7", features = ["codec"] }
+bytes = "1"
+futures = "0.3"
+thiserror = "2"
+tracing = "0.1"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full", "test-util"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+[[example]]
+name = "echo_server"
+path = "examples/echo_server.rs"
+
+[[example]]
+name = "in_memory_directory"
+path = "examples/in_memory_directory.rs"
+
+[[example]]
+name = "referral_only"
+path = "examples/referral_only.rs"
+
+[[example]]
+name = "registration_spool"
+path = "examples/registration_spool.rs"
+
+[[example]]
+name = "sqlite_directory"
+path = "examples/sqlite_directory.rs"
